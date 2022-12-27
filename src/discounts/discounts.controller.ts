@@ -1,10 +1,19 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { DiscountsService } from './discounts.service';
-import { AddUserDiscountDto } from '../users/dto/add-user-discount.dto';
 import { CreateDiscountDto } from './dto/create-discount.dto';
 import { UpdateDiscountDto } from './dto/update-discount.dto';
 
 @Controller('discounts')
+@ApiTags('discounts')
 export class DiscountsController {
   constructor(private readonly discountsService: DiscountsService) {}
 

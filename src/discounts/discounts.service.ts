@@ -37,8 +37,19 @@ export class DiscountsService {
     return this.discountRepository.findOneBy({ id });
   }
 
-  update(id: number, updateDiscountDto: UpdateDiscountDto) {
-    return `This action updates a #${id} discount`;
+  async update(id: number, updateDiscountDto: UpdateDiscountDto) {
+    const discount = await this.discountRepository.findOneBy({ id });
+    const { discountAmount, code, nthTransaction } = updateDiscountDto;
+    if (discountAmount) {
+      discount.discountAmount = discountAmount;
+    }
+    if (code) {
+      discount.code = code;
+    }
+    if (nthTransaction) {
+      discount.nthTransaction = nthTransaction;
+    }
+    this.discountRepository.save(discount);
   }
 
   async remove(id: number) {

@@ -45,8 +45,7 @@ async function bootstrap() {
   const options = new DocumentBuilder()
     .setTitle('E-Commerce API')
     .setVersion('1.0')
-    .addTag('symetra')
-    .addBearerAuth()
+    //.addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('', app, document);

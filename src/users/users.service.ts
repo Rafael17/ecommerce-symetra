@@ -8,7 +8,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Discount } from 'src/discounts/entities/discount.entity';
 import { Order } from 'src/orders/entities/order.entity';
 import { Repository } from 'typeorm';
-import { AddUserDiscountDto } from './dto/add-user-discount.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
@@ -112,26 +111,28 @@ export class UsersService {
     };
   }
 
-  async addUserDiscount(addUserDiscountDto: AddUserDiscountDto) {
-    const { userId, discountId } = addUserDiscountDto;
-    const user = await this.userRepository.findOne({
-      where: { id: userId },
-      relations: {
-        discounts: true,
-      },
-    });
-    const discount = await this.discountRepository.findOneBy({
-      id: discountId,
-    });
-    user.discounts = [...(user.discounts || []), discount];
-    await this.userRepository.save(user);
+  async update(id: number, updateUserDto: UpdateUserDto) {
+    const user = await this.userRepository.findOneBy({ id });
+    const { email, lastName, firstName } = updateUserDto;
+    if (email) {
+      user.email = email;
+    }
+    if (lastName) {
+      user.lastName = lastName;
+    }
+    if (firstName) {
+      user.firstName = firstName;
+    }
+    this.userRepository.save(user);
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(id: number) {
+    const user = await this.userRepository.findOneBy({ id });
+    if (user?.userRole === UserRoles.ADMIN) {
+      throw new ConflictException('Not allowed to delete admin user');
+    }
+    if (!!user) {
+      await this.userRepository.delete(id);
+    }
   }
 }

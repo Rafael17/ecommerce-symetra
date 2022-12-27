@@ -7,16 +7,14 @@ import {
   Param,
   Delete,
   ValidationPipe,
-  Version,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiTags } from '@nestjs/swagger';
-import { AddUserDiscountDto } from './dto/add-user-discount.dto';
 
 @Controller('users')
-@ApiTags('user')
+@ApiTags('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
@@ -48,11 +46,6 @@ export class UsersController {
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(+id, updateUserDto);
-  }
-
-  @Post(':userId/discounts/:discountId')
-  addUserDiscount(@Body() addUserDiscountDto: AddUserDiscountDto) {
-    return this.usersService.addUserDiscount(addUserDiscountDto);
   }
 
   @Delete(':id')
