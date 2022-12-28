@@ -7,11 +7,14 @@ import {
   Param,
   Delete,
   ValidationPipe,
+  Res,
+  HttpStatus,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { Response } from 'express';
 
 @Controller('users')
 @ApiTags('users')
@@ -19,8 +22,12 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
-  create(@Body(new ValidationPipe()) createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+  async create(
+    @Body(new ValidationPipe()) createUserDto: CreateUserDto,
+    @Res() res: Response,
+  ) {
+    const result = await this.usersService.create(createUserDto);
+    res.status(HttpStatus.CREATED).send(result);
   }
 
   @Get()
@@ -44,11 +51,13 @@ export class UsersController {
   }
 
   @Patch(':id')
-  update(
+  async update(
     @Param('id') id: string,
     @Body(new ValidationPipe()) updateUserDto: UpdateUserDto,
+    @Res() res: Response,
   ) {
-    return this.usersService.update(+id, updateUserDto);
+    const result = await this.usersService.update(+id, updateUserDto);
+    res.status(HttpStatus.OK).send(result);
   }
 
   @Delete(':id')

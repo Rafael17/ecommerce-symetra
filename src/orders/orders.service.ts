@@ -51,7 +51,7 @@ export class OrdersService {
     order.total = order.total > 0 ? order.total : 0;
     order.user = user;
 
-    await this.orderRepository.save(order);
+    const newOrder = await this.orderRepository.save(order);
     const discounts = await this.discountRepository.find({
       order: { id: 'DESC' },
       take: 1,
@@ -60,8 +60,9 @@ export class OrdersService {
     const orderCount = await this.orderRepository.count();
     if (latestDiscount && orderCount % latestDiscount.nthTransaction === 0) {
       user.discounts = [...(user.discounts || []), latestDiscount];
-      this.userRepository.save(user);
+      await this.userRepository.save(user);
     }
+    return newOrder;
   }
 
   async findAll() {

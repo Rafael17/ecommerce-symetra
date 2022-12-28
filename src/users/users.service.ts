@@ -37,7 +37,7 @@ export class UsersService {
     newUser.lastName = lastName;
     newUser.firstName = firstName;
     newUser.userRole = UserRoles.CUSTOMER;
-    await this.userRepository.save(newUser);
+    return this.userRepository.save(newUser);
   }
 
   async findAll(): Promise<User[]> {
@@ -123,7 +123,7 @@ export class UsersService {
     if (firstName) {
       user.firstName = firstName;
     }
-    this.userRepository.save(user);
+    return this.userRepository.save(user);
   }
 
   async remove(id: number) {
