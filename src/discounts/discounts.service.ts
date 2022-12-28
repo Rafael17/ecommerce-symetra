@@ -17,7 +17,7 @@ export class DiscountsService {
     private readonly discountRepository: Repository<Discount>,
   ) {}
   async create(createDiscountDto: CreateDiscountDto) {
-    const { code, discountAmount, nthTransaction } = createDiscountDto;
+    const { code, amount, nthTransaction } = createDiscountDto;
 
     const isCodeExist = await this.discountRepository.findOne({
       where: { code },
@@ -28,7 +28,7 @@ export class DiscountsService {
 
     const newDiscount = new Discount();
     newDiscount.code = code;
-    newDiscount.discountAmount = discountAmount;
+    newDiscount.amount = amount;
     newDiscount.nthTransaction = nthTransaction;
 
     return this.discountRepository.save(newDiscount);
@@ -47,9 +47,9 @@ export class DiscountsService {
     if (!discount) {
       throw new NotFoundException();
     }
-    const { discountAmount, code, nthTransaction } = updateDiscountDto;
-    if (discountAmount) {
-      discount.discountAmount = discountAmount;
+    const { amount, code, nthTransaction } = updateDiscountDto;
+    if (amount) {
+      discount.amount = amount;
     }
     if (code) {
       discount.code = code;

@@ -37,17 +37,17 @@ export class OrdersService {
       throw new ConflictException('Not enough inventory to proccess order');
     }
 
-    let discountAmount = 0;
+    let amount = 0;
     if (discountCode) {
-      discountAmount =
+      amount =
         user.discounts.find((discount) => discount.code === discountCode)
-          ?.discountAmount || 0;
+          ?.amount || 0;
     }
 
     const order = new Order();
     order.product = product;
     order.quantity = quantity;
-    order.total = quantity * product.price - discountAmount;
+    order.total = quantity * product.price - amount;
     order.total = order.total > 0 ? order.total : 0;
     order.user = user;
 

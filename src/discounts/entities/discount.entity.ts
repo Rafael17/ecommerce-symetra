@@ -10,7 +10,7 @@ export class Discount {
   code: string;
 
   @Column()
-  discountAmount: number;
+  amount: number;
 
   @ManyToMany(() => User, (user) => user.discounts, {
     cascade: true,

@@ -16,7 +16,7 @@ export class CreateDiscountDto {
   })
   @IsNotEmpty()
   @IsNumber()
-  discountAmount: number;
+  amount: number;
 
   @ApiProperty({
     example: 2,
