@@ -1,4 +1,9 @@
-import { ConflictException, HttpException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  HttpException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateDiscountDto } from './dto/create-discount.dto';
@@ -26,7 +31,7 @@ export class DiscountsService {
     newDiscount.discountAmount = discountAmount;
     newDiscount.nthTransaction = nthTransaction;
 
-    await this.discountRepository.save(newDiscount);
+    return this.discountRepository.save(newDiscount);
   }
 
   async findAll(): Promise<Discount[]> {
@@ -39,6 +44,9 @@ export class DiscountsService {
 
   async update(id: number, updateDiscountDto: UpdateDiscountDto) {
     const discount = await this.discountRepository.findOneBy({ id });
+    if (!discount) {
+      throw new NotFoundException();
+    }
     const { discountAmount, code, nthTransaction } = updateDiscountDto;
     if (discountAmount) {
       discount.discountAmount = discountAmount;
@@ -49,10 +57,13 @@ export class DiscountsService {
     if (nthTransaction) {
       discount.nthTransaction = nthTransaction;
     }
-    this.discountRepository.save(discount);
+    return this.discountRepository.save(discount);
   }
 
   async remove(id: number) {
-    await this.discountRepository.delete({ id });
+    const results = await this.discountRepository.delete({ id });
+    if (results.affected === 0) {
+      throw new NotFoundException();
+    }
   }
 }
