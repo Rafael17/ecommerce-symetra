@@ -9,6 +9,7 @@ import { Discount } from 'src/discounts/entities/discount.entity';
 import { Product } from 'src/products/entities/product.entity';
 import { ProductsService } from 'src/products/products.service';
 import { User } from 'src/users/entities/user.entity';
+import { UsersService } from 'src/users/users.service';
 import { Repository } from 'typeorm';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
@@ -21,14 +22,13 @@ export class OrdersService {
     private readonly orderRepository: Repository<Order>,
     @InjectRepository(Discount)
     private readonly discountRepository: Repository<Discount>,
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
     private readonly productService: ProductsService,
+    private readonly usersService: UsersService,
   ) {}
   async create(createOrderDto: CreateOrderDto) {
     const { productId, quantity, userId, discountCode } = createOrderDto;
     const product = await this.productService.findOne(productId);
-    const user = await this.userRepository.findOne({
+    const user = await this.usersService.findOneQuery({
       where: { id: userId },
       relations: { discounts: true },
     });
@@ -60,7 +60,7 @@ export class OrdersService {
     const orderCount = await this.orderRepository.count();
     if (latestDiscount && orderCount % latestDiscount.nthTransaction === 0) {
       user.discounts = [...(user.discounts || []), latestDiscount];
-      await this.userRepository.save(user);
+      await this.usersService.save(user);
     }
 
     product.quantity = product.quantity - quantity;

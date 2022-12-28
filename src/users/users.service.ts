@@ -64,6 +64,17 @@ export class UsersService {
     return user;
   }
 
+  async findOneQuery(query) {
+    const user = await this.userRepository.findOne(query);
+    if (!user) {
+      throw new HttpException(
+        'User not found',
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+    return user;
+  }
+
   async findUserOrders(id: number): Promise<Order[]> {
     const user = await this.userRepository.findOne({
       where: { id },
@@ -123,6 +134,10 @@ export class UsersService {
     if (firstName) {
       user.firstName = firstName;
     }
+    return this.userRepository.save(user);
+  }
+
+  save(user: User) {
     return this.userRepository.save(user);
   }
 
