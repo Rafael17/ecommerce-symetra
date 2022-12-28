@@ -45,3 +45,7 @@ Given the intentionally vague requirements the following assumptions where made:
 - Does the discount code work for any user or only to the given users?
 
   - Only to the user given the discount
+
+- What happens when admin adds a new discount code?
+  - Old discounts code keep working until deleted
+  - Only the latest discount code is given out to user at nth transaction
