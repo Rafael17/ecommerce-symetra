@@ -62,6 +62,9 @@ export class OrdersService {
       user.discounts = [...(user.discounts || []), latestDiscount];
       await this.userRepository.save(user);
     }
+
+    product.quantity = product.quantity - quantity;
+    this.productRepository.save(product);
     return newOrder;
   }
 
