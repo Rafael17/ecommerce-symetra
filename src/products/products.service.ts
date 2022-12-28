@@ -17,8 +17,11 @@ export class ProductsService {
     product.name = name;
     product.price = price;
     product.quantity = quantity;
-    await this.productRepository.save(product);
-    return product;
+    return await this.save(product);
+  }
+
+  async save(product: Product) {
+    return this.productRepository.save(product);
   }
 
   findAll() {

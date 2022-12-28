@@ -7,6 +7,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Discount } from 'src/discounts/entities/discount.entity';
 import { Product } from 'src/products/entities/product.entity';
+import { ProductsService } from 'src/products/products.service';
 import { User } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
 import { CreateOrderDto } from './dto/create-order.dto';
@@ -16,18 +17,17 @@ import { Order } from './entities/order.entity';
 @Injectable()
 export class OrdersService {
   constructor(
-    @InjectRepository(Product)
-    private readonly productRepository: Repository<Product>,
     @InjectRepository(Order)
     private readonly orderRepository: Repository<Order>,
     @InjectRepository(Discount)
     private readonly discountRepository: Repository<Discount>,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    private readonly productService: ProductsService,
   ) {}
   async create(createOrderDto: CreateOrderDto) {
     const { productId, quantity, userId, discountCode } = createOrderDto;
-    const product = await this.productRepository.findOneBy({ id: productId });
+    const product = await this.productService.findOne(productId);
     const user = await this.userRepository.findOne({
       where: { id: userId },
       relations: { discounts: true },
@@ -64,7 +64,7 @@ export class OrdersService {
     }
 
     product.quantity = product.quantity - quantity;
-    this.productRepository.save(product);
+    await this.productService.save(product);
     return newOrder;
   }
 
